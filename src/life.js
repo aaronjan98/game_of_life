@@ -8,21 +8,21 @@ let startingResolution;
 let blurAmount = 255;
 
 function setup() {
-  cnv = createCanvas(windowWidth, windowHeight / 2);
+  cnv = createCanvas(windowWidth, windowHeight / 1.5);
   cnv.parent("canvas");
-  startingResolution = windowWidth * (windowHeight / 2);
-  colorMode(HSB);
-  grid = new Grid(width, height, 20);
+  startingResolution = windowWidth * (windowHeight / 1.5);
+
+  grid = new Grid(width, height, 15);
   grid.init();
 }
 
 function draw() {
   if (isRunning) {
+    // if statement slows down the rate because as speed is decreased, its value actually increases -- meaning less frameCounts go into speed and slowing the rate
     if (frameCount % speed === 0) {
-      blur(blurAmount);
-      colorMode(HSB);
-      stroke(0);
+      // runs the whole animation
       grid.runSimulation();
+      //keeps track of the generation
       let gen = generation.textContent;
       generation.textContent = Number(gen) + 1;
     }
@@ -66,13 +66,6 @@ function windowResized() {
   grid.render();
 }
 
-function blur(amount) {
-  colorMode(RGB);
-  fill(0, amount);
-  noStroke();
-  rect(0, 0, width, height);
-}
-
 // DOM stuff
 const playBtn = document.querySelector("#playback");
 const clearBtn = document.querySelector("#clear");
@@ -92,7 +85,9 @@ playBtn.addEventListener("click", () => {
 
 clearBtn.addEventListener("click", () => {
   grid.clear();
-  background(0);
+//   fill(`hsl(240, 100%, 50%)`);
+
+  background(`hsl(240, 100%, 50%)`);
   isRunning = false;
   playBtn.textContent = "start";
   generation.textContent = 0;
@@ -100,7 +95,7 @@ clearBtn.addEventListener("click", () => {
 
 reseed.addEventListener("click", () => {
   clear();
-  background(0);
+  background(`hsl(240, 100%, 50%)`);
   grid.reseed();
 });
 

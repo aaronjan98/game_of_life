@@ -1,13 +1,12 @@
 class Cell {
-    constructor(alive) {
+    constructor(alive=false, age=0) {
       this.alive = alive;
-      this.age = 0;
+      this.age = age;
       this.neighborCount = 0;
     }
   
     kill = () => {
       this.alive = false;
-      this.age = 0;
     };
   
     toggle = () => {

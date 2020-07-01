@@ -19,25 +19,11 @@ html {
   font-size: 62.5%;
 }
 
-body {
-  font-family: "Fira Code", monospace;
-  background-color: var(--background);
-  user-select: none;
-
-  min-height: 100vh;
-  background-image: linear-gradient(
-      217deg,
-      rgba(225, 225, 225, 0.8),
-      rgba(200, 200, 200, 0) 70.71%
-    ),
-    linear-gradient(
-      127deg,
-      rgba(127, 127, 127, 0.8),
-      rgba(250, 250, 250, 0) 70.71%
-    ),
-    linear-gradient(336deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0) 70.71%);
-  background-size: cover;
-  background-position: center;
+body { 
+    padding: 0; 
+    margin: 0; 
+    text-align: center; 
+    background: #0000FF; 
 }
 
 #canvas {

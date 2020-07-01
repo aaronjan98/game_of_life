@@ -1,5 +1,5 @@
 class Grid {
-    constructor(width, height, resolution = 10) {
+    constructor(width, height, resolution = 15) {
       this.resolution = resolution;
       this.width = width;
       this.height = height;
@@ -7,10 +7,10 @@ class Grid {
       this.rows = floor(this.height / this.resolution);
       this.items = new Array(this.cols);
       this.next = new Array(this.cols);
+      this.maxTotal = 0;
     }
   
     init = (dimensions) => {
-      // ignore minimumDensity for 3D mode
         this.setMinimumDensity();
         this.make2DArray(this.items);
 
@@ -18,7 +18,6 @@ class Grid {
         this.populateGrid();
         this.countNeighbors();
 
-        background(0);
         this.render();
     };
   
@@ -35,44 +34,50 @@ class Grid {
         arr[x] = new Array(this.rows);
       }
     };
-  
+    
+    // populate grid with random live/dead cells
     populateGrid = () => {
       this.loopRunner((x, y) => {
         let rand = floor(random(1.6));
-        let alive;
-        rand ? (alive = true) : (alive = false);
-        this.items[x][y] = new Cell(alive);
+        let alive, age;
+        
+        // rand ? (alive = true) : (alive = false);
+        if (rand){
+            alive = true
+            age = 1
+        }else{
+            alive = false
+            age = 0
+        }
+        this.items[x][y] = new Cell(alive, age);
       });
     };
   
     render = () => {
-      this.loopRunner((x, y, w, h) => {
-        if (this.items[x][y].alive) {
-          // color cell by age (red (new) --> purple (old))
-          const hue = this.clamp(this.items[x][y].age * 0.25, 0, 270);
-          const intensity = this.clamp(this.items[x][y].age * 0.5 + 10, 0, 100);
-          fill(hue, intensity, intensity + 20);
-          rect(w, h, this.resolution);
-        }
-        // this.debug(x, y, w, h);
-      });
-    };
-  
-    render3D = () => {
-      colorMode(HSB);
-      this.loopRunner((x, y, w, h) => {
-        if (this.items[x][y].alive) {
-          shininess(this.items[x][y].age * 0.25);
-          const hue = this.clamp(this.items[x][y].age, 0, 270);
-          const intensity = this.clamp(this.items[x][y].age * 0.5 + 10, 0, 100);
-          specularMaterial(hue, intensity, intensity + 20);
-          push();
-          translate(w - width / 2, h - height / 2);
-          box(this.resolution, this.resolution, this.items[x][y].age * 0.5);
-          pop();
-        }
-      });
-      colorMode(RGB);
+        // console.log('age:', this.items[0][0].age, 'total:', this.maxTotal);
+        this.loopRunner((x, y, w, h) => {
+            
+            if (this.items[x][y].age > this.maxTotal) {
+                this.maxTotal = this.items[x][y].age;
+                // console.log('maxTotal:', this.maxTotal);
+            };
+            
+            let normalized
+            
+            // can't divide by 0 so setting normalized to 0
+            if (this.maxTotal == 0 || this.items[x][y].age == 0) {
+                normalized = 0;
+            }else {
+                // normalize maxTotal and scale the hsl value accordingly
+                normalized = this.items[x][y].age / this.maxTotal;
+            }
+            // console.log(x, y, normalized);
+            // normalized should be a value between 0 and 1
+            const hue = (1 - normalized) * 240;
+            // 240 is purple
+            fill(`hsl(${Math.floor(hue)}, 100%, 50%)`);
+            rect(w, h, this.resolution, this.resolution);
+        });
     };
   
     clicked = (mouseX, mouseY) => {
@@ -84,6 +89,8 @@ class Grid {
           mouseY > h &&
           mouseY < h + this.resolution
         ) {
+          console.log(x, y);
+          
           this.items[x][y].kill();
           this.items[x][y].toggle();
         }
@@ -115,31 +122,35 @@ class Grid {
     };
   
     runSimulation = (dimensions) => {
-      this.countNeighbors();
-      this.next = this.items;
-      this.loopRunner((x, y, w, h) => {
-        let cell = this.items[x][y];
-  
-        // underpopulation
-        if (cell.alive && cell.neighborCount < 2) {
-          this.next[x][y] = new Cell(false);
-        }
-        // overpopulation
-        else if (cell.alive && cell.neighborCount > 3) {
-          this.next[x][y] = new Cell(false);
-        }
-        // reproduction
-        else if (!cell.alive && cell.neighborCount === 3) {
-          this.next[x][y] = new Cell(true);
-        }
-        // lives on
-        else {
-          this.next[x][y].age += 1;
-        }
-      });
-  
-      this.items = this.next;
-      dimensions === "3D" ? this.render3D() : this.render();
+        this.countNeighbors();
+        this.next = this.items
+
+        this.loopRunner((x, y, w, h) => {
+            let cell = this.items[x][y];
+            let age = cell.age
+            
+            // underpopulation
+            if (cell.neighborCount < 2) {
+                this.next[x][y] = new Cell(false, age);
+            }
+            // overpopulation
+            else if (cell.neighborCount > 3) {
+                this.next[x][y] = new Cell(false, age);
+            }
+            // reproduction
+            else if (cell.neighborCount === 3) {
+                this.next[x][y] = new Cell(true, ++age);
+            }
+            // if surrounded by two or three cells, it'll stay alive
+            else if (cell.alive) {
+                this.next[x][y] = new Cell(true, ++age);
+            }
+
+        });
+
+        // swap the hidden buffer to display
+        this.items = this.next;
+        this.render();
     };
   
     resize = (w, h) => {
@@ -153,13 +164,13 @@ class Grid {
       this.loopRunner((x, y) => {
         this.items[x][y].kill();
       });
-      dimensions === "3D" ? this.render3D() : this.render();
+      this.render();
     };
   
     reseed = (dimensions) => {
       this.clear();
       this.populateGrid();
-      dimensions === "3D" ? this.render3D() : this.render();
+      this.render();
     };
   
     clamp = (value, min, max) => {
