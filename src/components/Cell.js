@@ -12,5 +12,10 @@ class Cell {
     toggle = () => {
       this.alive = !this.alive;
     };
+
+    draw_cell = (max_age=this.age) => {
+        this.alive = true;
+        this.age = max_age;
+    }
 }
   

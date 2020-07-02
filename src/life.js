@@ -32,8 +32,9 @@ function draw() {
 function mousePressed() {
   if (!isRunning) {
     grid.clicked(mouseX, mouseY);
-    grid.render();
-    grid.countNeighbors();
+    // console.log(mouseX, mouseY);
+    // grid.render();
+    // grid.countNeighbors();
   }
 }
 
@@ -43,15 +44,16 @@ function mouseDragged() {
     // only run if mouse is within sketch bounds
     if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
       grid.clicked(mouseX, mouseY);
-      grid.render();
+    //   grid.render();
     }
-  }
+}
 }
 
 function mouseReleased() {
-  if (!isRunning) {
-    // don't bother counting neighbors until user drawing is complete
-    grid.countNeighbors();
+    if (!isRunning) {
+        // don't bother counting neighbors until user drawing is complete
+        grid.countNeighbors();
+        grid.render();
   }
 }
 
@@ -84,19 +86,19 @@ playBtn.addEventListener("click", () => {
 });
 
 clearBtn.addEventListener("click", () => {
-  grid.clear();
-//   fill(`hsl(240, 100%, 50%)`);
+    grid.clear();
+    // fill(`hsl(240, 100%, 50%)`);
 
-  background(`hsl(240, 100%, 50%)`);
-  isRunning = false;
-  playBtn.textContent = "start";
-  generation.textContent = 0;
+    // background(`hsl(240, 100%, 50%)`);
+    isRunning = false;
+    playBtn.textContent = "start";
+    generation.textContent = 0;
 });
 
 reseed.addEventListener("click", () => {
-  clear();
-  background(`hsl(240, 100%, 50%)`);
-  grid.reseed();
+    // clear();
+    // background(`hsl(240, 100%, 50%)`);
+    grid.reseed();
 });
 
 // set initial speed

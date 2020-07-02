@@ -23,7 +23,7 @@ class Grid {
   
     setMinimumDensity = () => {
       if (this.cols * this.rows <= 10000) {
-        this.resolution = 20;
+        this.resolution = 10;
         this.cols = floor(this.width / this.resolution);
         this.rows = floor(this.height / this.resolution);
       }
@@ -40,6 +40,7 @@ class Grid {
       this.loopRunner((x, y) => {
         let rand = floor(random(1.6));
         let alive, age;
+        this.maxTotal = 1;
         
         // rand ? (alive = true) : (alive = false);
         if (rand){
@@ -54,12 +55,10 @@ class Grid {
     };
   
     render = () => {
-        // console.log('age:', this.items[0][0].age, 'total:', this.maxTotal);
         this.loopRunner((x, y, w, h) => {
             
             if (this.items[x][y].age > this.maxTotal) {
                 this.maxTotal = this.items[x][y].age;
-                // console.log('maxTotal:', this.maxTotal);
             };
             
             let normalized
@@ -67,11 +66,11 @@ class Grid {
             // can't divide by 0 so setting normalized to 0
             if (this.maxTotal == 0 || this.items[x][y].age == 0) {
                 normalized = 0;
-            }else {
+            }
+            else {
                 // normalize maxTotal and scale the hsl value accordingly
                 normalized = this.items[x][y].age / this.maxTotal;
             }
-            // console.log(x, y, normalized);
             // normalized should be a value between 0 and 1
             const hue = (1 - normalized) * 240;
             // 240 is purple
@@ -90,9 +89,7 @@ class Grid {
           mouseY < h + this.resolution
         ) {
           console.log(x, y);
-          
-          this.items[x][y].kill();
-          this.items[x][y].toggle();
+          this.items[x][y].draw_cell(this.maxTotal);
         }
       });
     };
@@ -163,13 +160,15 @@ class Grid {
     clear = (dimensions) => {
       this.loopRunner((x, y) => {
         this.items[x][y].kill();
+        this.items[x][y].age = 0;
       });
       this.render();
     };
   
     reseed = (dimensions) => {
-      this.clear();
+    //   this.clear();
       this.populateGrid();
+      this.countNeighbors();
       this.render();
     };
   
