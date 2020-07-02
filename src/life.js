@@ -50,7 +50,7 @@ function windowResized() {
   // it could be possible to recreate the arrays on resize (larger than initial size) for a more complete fix
   if (windowWidth * (windowHeight / 2) < startingResolution) {
     resizeCanvas(windowWidth, floor(windowHeight * 0.5));
-    background(0);
+    // background(0);
     grid.resize(width, height);
   }
   grid.render();
@@ -74,17 +74,12 @@ playBtn.addEventListener("click", () => {
 
 clearBtn.addEventListener("click", () => {
     grid.clear();
-    // fill(`hsl(240, 100%, 50%)`);
-
-    // background(`hsl(240, 100%, 50%)`);
     isRunning = false;
     playBtn.textContent = "start";
     generation.textContent = 0;
 });
 
 reseed.addEventListener("click", () => {
-    // clear();
-    // background(`hsl(240, 100%, 50%)`);
     grid.reseed();
     isRunning = false;
     playBtn.textContent = "start";
