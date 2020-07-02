@@ -17,5 +17,16 @@ class Cell {
         this.alive = true;
         this.age = max_age;
     }
+
+    re_draw_cell = (max_age) => {
+        if (this.age == max_age) {
+            this.alive = !this.alive;
+            this.age = 0;
+        }
+        else {
+            this.alive = !this.alive;
+            this.age = max_age;
+        }
+    }
 }
   

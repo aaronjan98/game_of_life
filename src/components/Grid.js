@@ -42,7 +42,6 @@ class Grid {
         let alive, age;
         this.maxTotal = 1;
         
-        // rand ? (alive = true) : (alive = false);
         if (rand){
             alive = true
             age = 1
@@ -88,8 +87,21 @@ class Grid {
           mouseY > h &&
           mouseY < h + this.resolution
         ) {
-          console.log(x, y);
           this.items[x][y].draw_cell(this.maxTotal);
+        }
+      });
+    };
+
+    re_push = (mouseX, mouseY) => {
+      this.loopRunner((x, y, w, h) => {
+        // check if mousePressed location is within bounds
+        if (
+          mouseX > w &&
+          mouseX < w + this.resolution &&
+          mouseY > h &&
+          mouseY < h + this.resolution
+        ) {
+            this.items[x][y].re_draw_cell(this.maxTotal);
         }
       });
     };
@@ -162,6 +174,7 @@ class Grid {
         this.items[x][y].kill();
         this.items[x][y].age = 0;
       });
+      this.maxTotal = 1;
       this.render();
     };
   
@@ -190,17 +203,6 @@ class Grid {
           callback(x, y, w, h);
         }
       }
-    };
-  
-    debug = (x, y, w, h) => {
-      fill(255);
-      text(`${x},${y}`, x + w, y + h + 10);
-      fill(0, 255, 0);
-      text(
-        `${this.items[x][y].neighborCount}`,
-        x + w + this.resolution / 2,
-        y + h + this.resolution / 2
-      );
     };
 }
   

@@ -5,7 +5,6 @@ let cnv;
 let speed = null; // higher number = slower render speed
 let isRunning = false;
 let startingResolution;
-let blurAmount = 255;
 
 function setup() {
   cnv = createCanvas(windowWidth, windowHeight / 1.5);
@@ -29,31 +28,20 @@ function draw() {
   }
 }
 
-function mousePressed() {
+function mouseClicked() {
   if (!isRunning) {
-    grid.clicked(mouseX, mouseY);
-    // console.log(mouseX, mouseY);
-    // grid.render();
-    // grid.countNeighbors();
+    grid.re_push(mouseX, mouseY);
+    grid.render();
   }
 }
 
 function mouseDragged() {
-  // background(0);
   if (!isRunning) {
     // only run if mouse is within sketch bounds
     if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
       grid.clicked(mouseX, mouseY);
-    //   grid.render();
+      grid.render();
     }
-}
-}
-
-function mouseReleased() {
-    if (!isRunning) {
-        // don't bother counting neighbors until user drawing is complete
-        grid.countNeighbors();
-        grid.render();
   }
 }
 
@@ -74,7 +62,6 @@ const clearBtn = document.querySelector("#clear");
 const reseed = document.querySelector("#reseed");
 const speedSlider = document.querySelector("#speed");
 const generation = document.querySelector("#generation");
-const blurSlider = document.querySelector("#blur");
 
 playBtn.addEventListener("click", () => {
   isRunning = !isRunning;
@@ -99,6 +86,9 @@ reseed.addEventListener("click", () => {
     // clear();
     // background(`hsl(240, 100%, 50%)`);
     grid.reseed();
+    isRunning = false;
+    playBtn.textContent = "start";
+    generation.textContent = 0;
 });
 
 // set initial speed
@@ -110,6 +100,3 @@ speedSlider.addEventListener("input", (e) => {
   speed = 61 - e.target.value;
 });
 
-blurSlider.addEventListener("input", (e) => {
-  blurAmount = 260 - Number(e.target.value);
-});
