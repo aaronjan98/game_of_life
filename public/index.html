@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game of Life</title>
+
+    <link rel="stylesheet" href="../src/styles/main.css" />
+    <script src="../libraries/p5.js"></script>
+</head>
+<body>
+    <div class="header">
+          <h2>Game of Life</h2>
+    </div>
+
+    <h3>generation #<span id="generation">0</span></h3>
+    <div id="canvas"></div>
+
+    <div class="controls-container">
+      <div class="controls">
+        <label for="speed">simulation speed</label>
+        <input
+          class="slider"
+          id="speed"
+          type="range"
+          min="1"
+          max="60"
+          step="1"
+          value="60"
+        />
+        
+        <div class="buttons">
+          <button id="playback">start</button>
+          <button id="clear">clear</button>
+          <button id="reseed">re-seed</button>
+        </div>
+        <div class="info">
+          <h3>Rules:</h3>
+          <p>
+            <strong>1. </strong>&nbsp;Any live cell with fewer than two live
+            neighbors dies due to underpopulation.
+          </p>
+          <p>
+            <strong>2. </strong>&nbsp;Any live cell with more than 3 live
+            neighbors dies due to overpopulation.
+          </p>
+          <p>
+            <strong>3. </strong>&nbsp;Any dead cell with exactly 3 live
+            neighbors becomes alive akin to reproduction.
+          </p>
+          <p>
+            <strong>4. </strong>&nbsp;In any other case the cell lives on to
+            the next generation, ages.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script src="../src/components/Cell.js"></script>
+    <script src="../src/components/Grid.js"></script>
+    <script src="../src/life.js"></script>
+</body>
+</html>
